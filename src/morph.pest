@@ -1,0 +1,36 @@
+// Morph PEG grammar
+file = { SOI ~ declaration* ~ EOI }
+
+declaration = { enum_decl | struct_decl }
+
+// Enum declaration
+enum_decl = { "enum" ~ identifier ~ ":" ~ integer_type ~ "{" ~ enum_variant_list ~ "}" }
+enum_variant_list = { (enum_variant ~ ("," ~ enum_variant)* ~ ","?)? }
+enum_variant = { identifier ~ ("=" ~ integer_literal)? }
+
+// Struct declaration
+struct_decl = { "struct" ~ identifier ~ "{" ~ struct_field_list ~ "}" ~ ";"? }
+struct_field_list = { (struct_field ~ ("," ~ struct_field)* ~ ","?)? }
+struct_field = { identifier ~ ":" ~ field_type }
+
+// Field types
+field_type = { (array_type | map_type | simple_type) ~ nullable? }
+simple_type = { builtin_type | identifier }
+array_type = { "[" ~ simple_type ~ (";" ~ integer_literal)? ~ "]" }
+map_type = { "{" ~ simple_type ~ ":" ~ simple_type ~ "}" }
+nullable = { "?" }
+
+// Built-in types
+builtin_type = { integer_type | float_type | "string" | "bool" }
+integer_type = { "i8" | "u8" | "i16" | "u16" | "i32" | "u32" | "i64" | "u64" }
+float_type = { "f32" | "f64" }
+
+// Literals
+integer_literal = @{ ASCII_DIGIT+ }
+
+// Identifier
+identifier = @{ ASCII_ALPHA ~ (ASCII_ALPHANUMERIC | "_")* }
+
+// Whitespace and comments (silently consumed)
+WHITESPACE = _{ " " | "\t" | NEWLINE }
+COMMENT = _{ "//" ~ (!NEWLINE ~ ANY)* }
