@@ -1,0 +1,27 @@
+meta {
+    format = 1,
+}
+
+enum enum1 {
+	a,
+	b,
+}
+
+// Every struct type
+struct type1 {
+	a4: u16,
+	n1: i8?,
+	n2: f32,
+        n3: f64?,
+	s1: string,
+	s2: string?,
+	e1: enum1,
+	e2: enum1?,
+	r1: [ string ],
+	r2: [ string ]?,
+	r3: [ string; 10],
+	r4: [ [ i32 ] ],
+	m1: { i32 : f64 },
+	m2: { string : { i32: [ f64] } },
+	t1: type1,
+};

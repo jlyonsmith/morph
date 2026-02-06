@@ -1,0 +1,21 @@
+meta {
+    format = 1,
+}
+
+// Enum with no variants and no base type
+enum e1 {}
+
+// Enum with no variants and base type
+enum e2: i16 {}
+
+// Enum with no base type and variants
+enum e3 {
+    a = 1,
+    b,
+    c,
+}
+
+// Enum with base type and variants
+enum e4: i64 {
+    a, b, c, d, e = 655360183
+}
