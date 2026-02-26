@@ -1,5 +1,5 @@
 //! A cross-language schema compiler that generates type definitions and serialization code from a simple, declarative schema language.
-//! This crate contains the Abstract Syntaxt Tree (AST), errors and parsing code for the Morph tool.
+//! This crate contains the Abstract Syntaxt Tree (AST), errors and parsing code for the Geno tool.
 
 #![warn(missing_docs)]
 
@@ -18,31 +18,31 @@ mod parser {
     use super::*;
 
     #[derive(Parser)]
-    #[grammar = "morph.pest"]
-    pub struct MorphParser;
+    #[grammar = "geno.pest"]
+    pub struct GenoParser;
 }
 
-use parser::{MorphParser, Rule};
+use parser::{GenoParser, Rule};
 
-/// A Morph AST builder
-pub struct MorphAstBuilder {
+/// A Geno AST builder
+pub struct GenoAstBuilder {
     file_path: PathBuf,
 }
 
-impl MorphAstBuilder {
-    /// Create a new Morph AST builder from a file path.  A file path is required
+impl GenoAstBuilder {
+    /// Create a new Geno AST builder from a file path.  A file path is required
     /// in order to give meaningful error messages.
     pub fn new(file_path: PathBuf) -> Self {
-        MorphAstBuilder { file_path }
+        GenoAstBuilder { file_path }
     }
 
     /// Build and validate the AST
-    pub fn build(&self) -> Result<ast::Schema, MorphError> {
+    pub fn build(&self) -> Result<ast::Schema, GenoError> {
         let input = std::fs::read_to_string(&self.file_path)?;
-        let mut schema_pairs = match MorphParser::parse(Rule::_schema, &input) {
+        let mut schema_pairs = match GenoParser::parse(Rule::_schema, &input) {
             Ok(pairs) => pairs,
             Err(err) => {
-                return Err(MorphError::Parse {
+                return Err(GenoError::Parse {
                     content: err.line().to_string(),
                     file: self.file_path.to_string_lossy().into_owned(),
                     location: Location::from(err.line_col),
@@ -62,7 +62,7 @@ impl MorphAstBuilder {
                 Rule::enum_decl => self.build_enum_decl(pair),
                 Rule::struct_decl => self.build_struct_decl(pair),
                 _ => {
-                    return Err(MorphError::new_parse_error(&pair, &self.file_path));
+                    return Err(GenoError::new_parse_error(&pair, &self.file_path));
                 }
             }?;
 
@@ -82,7 +82,7 @@ impl MorphAstBuilder {
     fn build_meta_decl(
         &self,
         pair: Pair<'_, Rule>,
-    ) -> Result<HashMap<String, ast::MetadataValue>, MorphError> {
+    ) -> Result<HashMap<String, ast::MetadataValue>, GenoError> {
         let mut inner_pairs = pair.into_inner();
         let inner_pair = inner_pairs.next().unwrap();
         let mut metadata = HashMap::new();
@@ -98,7 +98,7 @@ impl MorphAstBuilder {
                     ast::MetadataValue::Integer(self.build_integer_literal(value_pair)?)
                 }
                 _ => {
-                    return Err(MorphError::new_parse_error(&value_pair, &self.file_path));
+                    return Err(GenoError::new_parse_error(&value_pair, &self.file_path));
                 }
             };
 
@@ -108,7 +108,7 @@ impl MorphAstBuilder {
         Ok(metadata)
     }
 
-    fn build_integer_type(&self, pair: Pair<'_, Rule>) -> Result<ast::IntegerType, MorphError> {
+    fn build_integer_type(&self, pair: Pair<'_, Rule>) -> Result<ast::IntegerType, GenoError> {
         let s = pair.as_str();
 
         match s {
@@ -120,28 +120,28 @@ impl MorphAstBuilder {
             "u32" => Ok(ast::IntegerType::U32),
             "i64" => Ok(ast::IntegerType::I64),
             "u64" => Ok(ast::IntegerType::U64),
-            _ => Err(MorphError::new_parse_error(&pair, &self.file_path)),
+            _ => Err(GenoError::new_parse_error(&pair, &self.file_path)),
         }
     }
 
-    fn build_integer_literal(&self, pair: Pair<'_, Rule>) -> Result<ast::IntegerValue, MorphError> {
+    fn build_integer_literal(&self, pair: Pair<'_, Rule>) -> Result<ast::IntegerValue, GenoError> {
         let s = pair.as_str();
 
         if s.starts_with("0x") {
             // Hexadecimal
             let value = u64::from_str_radix(&s[2..], 16)
-                .map_err(|_| MorphError::new_number_format_error(&pair, &self.file_path))?;
+                .map_err(|_| GenoError::new_number_format_error(&pair, &self.file_path))?;
             Ok(ast::IntegerValue::U64(value))
         } else if s.starts_with("0b") {
             // Binary
             let value = u64::from_str_radix(&s[2..], 2)
-                .map_err(|_| MorphError::new_number_format_error(&pair, &self.file_path))?;
+                .map_err(|_| GenoError::new_number_format_error(&pair, &self.file_path))?;
             Ok(ast::IntegerValue::U64(value))
         } else {
             // Decimal
             let value = s
                 .parse::<i64>()
-                .map_err(|_| MorphError::new_number_format_error(&pair, &self.file_path))?;
+                .map_err(|_| GenoError::new_number_format_error(&pair, &self.file_path))?;
             Ok(ast::IntegerValue::I64(value))
         }
     }
@@ -149,7 +149,7 @@ impl MorphAstBuilder {
     fn build_enum_decl<'a>(
         &self,
         enum_decl_pair: Pair<'a, Rule>,
-    ) -> Result<ast::Declaration, MorphError> {
+    ) -> Result<ast::Declaration, GenoError> {
         let mut inner_pairs = enum_decl_pair.into_inner();
 
         let ident = inner_pairs.next().unwrap().as_str().to_string();
@@ -188,7 +188,7 @@ impl MorphAstBuilder {
     fn build_struct_decl<'a>(
         &self,
         struct_decl_pair: Pair<'a, Rule>,
-    ) -> Result<ast::Declaration, MorphError> {
+    ) -> Result<ast::Declaration, GenoError> {
         let mut inner_pairs = struct_decl_pair.into_inner();
 
         let ident = inner_pairs.next().unwrap().as_str().to_string();
@@ -211,7 +211,7 @@ impl MorphAstBuilder {
         Ok(ast::Declaration::Struct { ident, fields })
     }
 
-    fn build_field_type<'a>(&self, pair: Pair<'a, Rule>) -> Result<ast::FieldType, MorphError> {
+    fn build_field_type<'a>(&self, pair: Pair<'a, Rule>) -> Result<ast::FieldType, GenoError> {
         let mut inner_pairs = pair.into_inner();
         let inner_pair = inner_pairs.next().unwrap();
 
@@ -231,7 +231,7 @@ impl MorphAstBuilder {
                 let element_type_pair = inner_pairs.next().unwrap();
                 let length = if let Some(length_pair) = inner_pairs.next() {
                     Some(length_pair.as_str().parse::<usize>().map_err(|_| {
-                        MorphError::new_number_range_error(&length_pair, &self.file_path)
+                        GenoError::new_number_range_error(&length_pair, &self.file_path)
                     })?)
                 } else {
                     None
@@ -261,11 +261,11 @@ impl MorphAstBuilder {
                 inner_pair.as_str().to_string(),
                 nullable,
             )),
-            _ => Err(MorphError::new_parse_error(&inner_pair, &self.file_path)),
+            _ => Err(GenoError::new_parse_error(&inner_pair, &self.file_path)),
         }
     }
 
-    fn build_builtin_type(&self, pair: Pair<'_, Rule>) -> Result<ast::BuiltinType, MorphError> {
+    fn build_builtin_type(&self, pair: Pair<'_, Rule>) -> Result<ast::BuiltinType, GenoError> {
         let mut inner_pairs = pair.into_inner();
         let inner_pair = inner_pairs.next().unwrap();
 
@@ -278,12 +278,12 @@ impl MorphAstBuilder {
                 match s {
                     "f32" => Ok(ast::BuiltinType::Float(ast::FloatType::F32)),
                     "f64" => Ok(ast::BuiltinType::Float(ast::FloatType::F64)),
-                    _ => Err(MorphError::new_parse_error(&inner_pair, &self.file_path)),
+                    _ => Err(GenoError::new_parse_error(&inner_pair, &self.file_path)),
                 }
             }
             Rule::string_type => Ok(ast::BuiltinType::String),
             Rule::bool_type => Ok(ast::BuiltinType::Bool),
-            _ => Err(MorphError::new_parse_error(&inner_pair, &self.file_path)),
+            _ => Err(GenoError::new_parse_error(&inner_pair, &self.file_path)),
         }
     }
 }
@@ -343,7 +343,7 @@ struct type1 {
         let file = NamedTempFile::new().unwrap();
         let path = file.path().to_path_buf();
         fs::write(&path, input).unwrap();
-        let ast = MorphAstBuilder::new(path).build().unwrap();
+        let ast = GenoAstBuilder::new(path).build().unwrap();
 
         println!("{:?}", ast);
     }

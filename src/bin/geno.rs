@@ -1,7 +1,7 @@
 use anyhow::{Context, bail};
 use clap::Parser;
 use duct::cmd;
-use morph_tool::MorphAstBuilder;
+use geno::GenoAstBuilder;
 use std::{
     fs::{self, File},
     io::{Write, stdout},
@@ -10,9 +10,9 @@ use std::{
 };
 
 #[derive(Parser)]
-#[command(name = "morph", about = "Morph schema compiler")]
+#[command(name = "geno", about = "Geno schema compiler")]
 struct Cli {
-    /// Input .morph file
+    /// Input .geno file
     #[arg(value_name = "INPUT_FILE")]
     input_path: PathBuf,
 
@@ -53,7 +53,7 @@ fn run() -> anyhow::Result<i32> {
     };
 
     // Parse the input string into an AST
-    let ast_builder = MorphAstBuilder::new(cli.input_path);
+    let ast_builder = GenoAstBuilder::new(cli.input_path);
     let ast = ast_builder.build()?;
 
     // If the user specified an AST output path, write the AST to that file and exit
@@ -73,10 +73,10 @@ fn run() -> anyhow::Result<i32> {
         None => bail!("No output format specified"),
     };
 
-    let cmd_expr = if std::env::var("MORPH_DEBUG").is_ok() {
-        cmd!["cargo", "run", "--bin", &format!("morph-{}", format), "--"]
+    let cmd_expr = if std::env::var("GENO_DEBUG").is_ok() {
+        cmd!["cargo", "run", "--bin", &format!("geno-{}", format), "--"]
     } else {
-        cmd![&format!("morph-{}", format)]
+        cmd![&format!("geno-{}", format)]
     };
     let ast_bytes = rmp_serde::to_vec(&ast).context("Failed to serialize AST to MessagePack")?;
     let output = cmd_expr

@@ -2,7 +2,7 @@ list:
     just --list
 
 example EXAMPLE FORMAT:
-    cargo run --bin morph -- {{EXAMPLE}} | cargo run --bin morph-{{FORMAT}} --
+    cargo run --bin geno -- {{EXAMPLE}} | cargo run --bin geno-{{FORMAT}} --
 
 test:
   cargo test

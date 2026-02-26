@@ -120,7 +120,7 @@ pub struct Schema {
 
 impl Schema {
     /// Validate the schema, checking for duplicate type definitions and duplicate fields/variants within each declaration
-    pub fn validate(&self) -> Result<(), MorphError> {
+    pub fn validate(&self) -> Result<(), GenoError> {
         let mut type_names = HashSet::new();
 
         // Check for duplicate type definitions and duplicate fields/variants within each declaration
@@ -130,13 +130,13 @@ impl Schema {
                     ident, variants, ..
                 } => {
                     if !type_names.insert(ident.as_str()) {
-                        return Err(MorphError::DuplicateType(ident.clone()));
+                        return Err(GenoError::DuplicateType(ident.clone()));
                     }
                     let mut variant_names = HashSet::new();
 
                     for (variant_name, _) in variants {
                         if !variant_names.insert(variant_name.as_str()) {
-                            return Err(MorphError::DuplicateVariant(
+                            return Err(GenoError::DuplicateVariant(
                                 ident.clone(),
                                 variant_name.clone(),
                             ));
@@ -145,13 +145,13 @@ impl Schema {
                 }
                 Declaration::Struct { ident, fields } => {
                     if !type_names.insert(ident.as_str()) {
-                        return Err(MorphError::DuplicateType(ident.clone()));
+                        return Err(GenoError::DuplicateType(ident.clone()));
                     }
                     let mut field_names = HashSet::new();
 
                     for (field_name, _) in fields {
                         if !field_names.insert(field_name.as_str()) {
-                            return Err(MorphError::DuplicateField(
+                            return Err(GenoError::DuplicateField(
                                 ident.clone(),
                                 field_name.clone(),
                             ));
@@ -177,11 +177,11 @@ impl Schema {
         &self,
         field_type: &FieldType,
         type_names: &HashSet<&str>,
-    ) -> Result<(), MorphError> {
+    ) -> Result<(), GenoError> {
         match field_type {
             FieldType::UserDefined(name, _) => {
                 if !type_names.contains(name.as_str()) {
-                    return Err(MorphError::UndefinedType(name.clone()));
+                    return Err(GenoError::UndefinedType(name.clone()));
                 }
             }
             FieldType::Array(inner, _, _) => {

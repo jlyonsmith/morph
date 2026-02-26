@@ -1,12 +1,14 @@
-# Morph
+# Geno
 
-[![coverage](https://shields.io/endpoint?url=https://raw.githubusercontent.com/jlyonsmith/morph/main/coverage.json)](https://github.com/jlyonsmith/morph/blob/main/coverage.json)
-[![Crates.io](https://img.shields.io/crates/v/morph.svg)](https://crates.io/crates/morph)
-[![Docs.rs](https://docs.rs/morph/badge.svg)](https://docs.rs/morph)
+[![coverage](https://shields.io/endpoint?url=https://raw.githubusercontent.com/jlyonsmith/geno/main/coverage.json)](https://github.com/jlyonsmith/geno/blob/main/coverage.json)
+[![Crates.io](https://img.shields.io/crates/v/geno.svg)](https://crates.io/crates/geno)
+[![Docs.rs](https://docs.rs/geno/badge.svg)](https://docs.rs/geno)
 
 A cross-language schema compiler that generates type definitions and serialization code from a simple, declarative schema language.
 
-Define your data types once in a `.morph` file, then generate idiomatic code for multiple target languages.
+Define your data types once in a `.geno` file, then generate idiomatic code for multiple target languages.
+
+The name **geno** comes from the word **genome**, the set of genetic instructions containing all information needed for an organism to develop, function, and reproduce.
 
 > This project is still in development. In particular, the schema language is not yet stable. Please feel free to contribute!
 
@@ -22,13 +24,13 @@ There are several existing packing protocols with schema languages. In particula
 
 For my projects, I have found that the [MessagePack](https://msgpack.org/) protocol is actually the easiest packing protocol to work with, even if it is a little slower than the others. It's easy to integrate, perhaps because it is the closest to JSON, and JSON is still the most universal serialization format on the Internet.
 
-You could say that Morph is a schema language for MessagePack, which it is. But I think, more importantly, Morph  easily supports other formats, such as JSON, YAML, TOML and [TOON](https://github.com/toon-format/toon). And, you could even use it to generate schemas for any of the above protocols.  So really, Morph is a schema definition language that easily supports any modern language and packing protocol.
+You could say that Geno is a schema language for MessagePack, which it is. But I think, more importantly, Geno  easily supports other formats, such as JSON, YAML, TOML and [TOON](https://github.com/toon-format/toon). And, you could even use it to generate schemas for any of the above protocols.  So really, Geno is a schema definition language that easily supports any modern language and packing protocol.
 
-Finally, I designed the AST for Morph to be a simple as possible, which makes it easy for Claude Code and other AI's to comprehend in a small number tokens.  This ought to make it easy to create generators for your programming language and packing protocol of choice.
+Finally, I designed the AST for Geno to be a simple as possible, which makes it easy for Claude Code and other AI's to comprehend in a small number tokens.  This ought to make it easy to create generators for your programming language and packing protocol of choice.
 
 ## Schema Language
 
-Morph schemas consist of a single `meta` section followed by any number of `enum` and `struct` declarations.
+Geno schemas consist of a single `meta` section followed by any number of `enum` and `struct` declarations.
 
 ```
 meta {
@@ -63,7 +65,7 @@ There must be at least one key to define the schema format being used:
 |----------|--------|-------------|
 | `format` | `1`    | This is the only supported schema value at present |
 
-Otherwise, the `meta` section can contain any values that you like. You can use the `morph` crate to parse a `Schema` from a file and access the values easily.
+Otherwise, the `meta` section can contain any values that you like. You can use the `geno` crate to parse a `Schema` from a file and access the values easily.
 
 ### Types
 
@@ -99,8 +101,8 @@ Single-line comments with `//`.
 
 | Format | Binary | Description |
 |--------|--------|-------------|
-| `rust-serde` | `morph-rust-serde` | Rust structs/enums with `Serialize`/`Deserialize` derives |
-| `dart-mp` | `morph-dart-mp` | Dart classes/enums with MessagePack `toBytes`/`fromBytes` serialization |
+| `rust-serde` | `geno-rust-serde` | Rust structs/enums with `Serialize`/`Deserialize` derives |
+| `dart-mp` | `geno-dart-mp` | Dart classes/enums with MessagePack `toBytes`/`fromBytes` serialization |
 
 ### Rust Serde Output
 
@@ -121,22 +123,22 @@ Single-line comments with `//`.
 
 ```bash
 # Generate Rust code to stdout
-morph schema.morph -f rust-serde
+geno schema.geno -f rust-serde
 
 # Generate Dart code to a file
-morph schema.morph -f dart-mp -o lib/generated.dart
+geno schema.geno -f dart-mp -o lib/generated.dart
 
 # Dump the intermediate AST for debugging
-morph schema.morph -t schema.ast
+geno schema.geno -t schema.ast
 ```
 
 ### CLI Options
 
 ```
-morph <INPUT_FILE> [OPTIONS]
+geno <INPUT_FILE> [OPTIONS]
 
 Arguments:
-  <INPUT_FILE>           Input .morph file
+  <INPUT_FILE>           Input .geno file
 
 Options:
   -o <OUTPUT_FILE>       Output file path (defaults to stdout)
@@ -149,15 +151,15 @@ Options:
 Set `MORPH_DEBUG=1` to invoke code generators via `cargo run` instead of looking for installed binaries on `PATH`:
 
 ```bash
-MORPH_DEBUG=1 morph schema.morph -f rust-serde
+MORPH_DEBUG=1 geno schema.geno -f rust-serde
 ```
 
 ## Architecture
 
-Morph uses a multi-process pipeline. The main `morph` binary parses the schema and serializes the AST to MessagePack. It then pipes those bytes to a code generator binary (`morph-<format>`) via stdin, which writes generated source code to stdout.
+Geno uses a multi-process pipeline. The main `geno` binary parses the schema and serializes the AST to MessagePack. It then pipes those bytes to a code generator binary (`geno-<format>`) via stdin, which writes generated source code to stdout.
 
 ```
-.morph file ──► morph (parser + validator) ──► MessagePack AST ──► morph-<format> ──► source code
+.geno file ──► geno (parser + validator) ──► MessagePack AST ──► geno-<format> ──► source code
 ```
 
 Code generators are standalone binaries that read a MessagePack-encoded `Schema` from stdin. This makes it straightforward to add new target languages without modifying the core parser.

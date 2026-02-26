@@ -1,33 +1,25 @@
 {
-    // Use IntelliSense to learn about possible attributes.
-    // Hover to view descriptions of existing attributes.
-    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
-    "version": "0.2.0",
-    "configurations": [
-        {
-            "type": "lldb",
-            "request": "launch",
-            "name": "Debug executable 'morph'",
-            "cargo": {
-                "args": [
-                    "build",
-                    "--bin=morph",
-                    "--package=morph"
-                ],
-                "filter": {
-                    "name": "morph",
-                    "kind": "bin"
-                }
-            },
-            "args": [
-                "${workspaceFolder}/examples/bad_struct.morph"
-            ],
-            "program": "${workspaceFolder}/target/debug/morph",
-            "cwd": "${workspaceFolder}",
-            "stopOnEntry": false,
-            "sourceLanguages": [
-                "rust"
-            ]
-        }
-    ]
+  // Use IntelliSense to learn about possible attributes.
+  // Hover to view descriptions of existing attributes.
+  // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "type": "lldb",
+      "request": "launch",
+      "name": "Debug executable 'geno'",
+      "cargo": {
+        "args": ["build", "--bin=geno", "--package=geno"],
+        "filter": {
+          "name": "geno",
+          "kind": "bin",
+        },
+      },
+      "args": ["${workspaceFolder}/examples/bad_struct.geno"],
+      "program": "${workspaceFolder}/target/debug/geno",
+      "cwd": "${workspaceFolder}",
+      "stopOnEntry": false,
+      "sourceLanguages": ["rust"],
+    },
+  ],
 }

@@ -217,6 +217,22 @@ dependencies = [
 ]
 
 [[package]]
+name = "geno"
+version = "0.1.0"
+dependencies = [
+ "anyhow",
+ "clap",
+ "duct",
+ "pest",
+ "pest_derive",
+ "rmp-serde",
+ "serde",
+ "tempfile",
+ "thiserror",
+ "which",
+]
+
+[[package]]
 name = "getrandom"
 version = "0.4.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -309,22 +325,6 @@ name = "memchr"
 version = "2.7.6"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "f52b00d39961fc5b2736ea853c9cc86238e165017a493d1d5c8eac6bdc4cc273"
-
-[[package]]
-name = "morph_tool"
-version = "0.1.0"
-dependencies = [
- "anyhow",
- "clap",
- "duct",
- "pest",
- "pest_derive",
- "rmp-serde",
- "serde",
- "tempfile",
- "thiserror",
- "which",
-]
 
 [[package]]
 name = "num-traits"

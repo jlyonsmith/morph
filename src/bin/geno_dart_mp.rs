@@ -1,4 +1,4 @@
-//! Morph Dart/MessagePacker generator.  All type categories are handled:
+//! Geno Dart/MessagePacker generator.  All type categories are handled:
 //!
 //! - Primitive types: p.packInt() / u.unpackInt()! etc.
 //! - Nullable primitives: null check with p.packNull() fallback / u.unpackInt() (returns nullable)
@@ -31,7 +31,7 @@
 //! └─────────────────────┴─────────────────────────────────────────┴─────────────────────────────┘
 //!
 use anyhow::Context;
-use morph_tool::ast;
+use geno::ast;
 use std::collections::HashSet;
 use std::fmt::Write as _;
 use std::io::{self, Read};

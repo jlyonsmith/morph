@@ -1,12 +1,12 @@
 [package]
-name = "morph_tool"
+name = "geno"
 version = "0.1.0"
 edition = "2024"
 authors = ["John Lyon-Smith <john@lyon-smith.org>"]
 
 readme = "README.md"
 description = "A cross-language schema compiler that generates type definitions and serialization code from a simple, declarative schema language."
-repository = "https://github.com/jlyonsmith/morph.git"
+repository = "https://github.com/jlyonsmith/geno.git"
 
 keywords = ["schema", "network", "language"]
 categories = ["command-line-utilities", "development-tools"]
@@ -26,13 +26,13 @@ rmp-serde = "1.3.1"
 duct = "1.1.1"
 
 [[bin]]
-name = "morph"
-path = "src/bin/morph.rs"
+name = "geno"
+path = "src/bin/geno.rs"
 
 [[bin]]
-name = "morph-rust-serde"
-path = "src/bin/morph_rust_serde.rs"
+name = "geno-rust-serde"
+path = "src/bin/geno_rust_serde.rs"
 
 [[bin]]
-name = "morph-dart-mp"
-path = "src/bin/morph_dart_mp.rs"
+name = "geno-dart-mp"
+path = "src/bin/geno_dart_mp.rs"

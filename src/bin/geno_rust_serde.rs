@@ -1,5 +1,5 @@
 use anyhow::Context;
-use morph_tool::ast;
+use geno::ast;
 use std::fmt::Write as _;
 use std::io::{self, Read};
 

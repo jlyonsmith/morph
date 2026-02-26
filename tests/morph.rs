@@ -12,9 +12,9 @@ fn parse_example_and_write_ast() {
         "cargo",
         "run",
         "--bin",
-        "morph",
+        "geno",
         "--",
-        "examples/example.morph",
+        "examples/example.geno",
         "-t",
         ast_str
     ]
@@ -34,7 +34,7 @@ fn parse_example_and_write_ast() {
     assert!(!ast_bytes.is_empty());
 
     // Verify the AST deserializes back to a valid Schema
-    let schema: morph_tool::ast::Schema = rmp_serde::from_slice(&ast_bytes).unwrap();
+    let schema: geno::ast::Schema = rmp_serde::from_slice(&ast_bytes).unwrap();
     assert!(!schema.declarations.is_empty());
 }
 
@@ -44,9 +44,9 @@ fn generate_rust_serde() {
         "cargo",
         "run",
         "--bin",
-        "morph",
+        "geno",
         "--",
-        "examples/example.morph",
+        "examples/example.geno",
         "-f",
         "rust-serde"
     ]
@@ -75,9 +75,9 @@ fn generate_dart_mp() {
         "cargo",
         "run",
         "--bin",
-        "morph",
+        "geno",
         "--",
-        "examples/example.morph",
+        "examples/example.geno",
         "-f",
         "dart-mp"
     ]
@@ -111,9 +111,9 @@ fn generate_to_output_file() {
         "cargo",
         "run",
         "--bin",
-        "morph",
+        "geno",
         "--",
-        "examples/example.morph",
+        "examples/example.geno",
         "-f",
         "rust-serde",
         "-o",
@@ -141,9 +141,9 @@ fn missing_input_file() {
         "cargo",
         "run",
         "--bin",
-        "morph",
+        "geno",
         "--",
-        "nonexistent.morph",
+        "nonexistent.geno",
         "-f",
         "rust-serde"
     ]
@@ -163,9 +163,9 @@ fn no_format_specified() {
         "cargo",
         "run",
         "--bin",
-        "morph",
+        "geno",
         "--",
-        "examples/example.morph"
+        "examples/example.geno"
     ]
     .stdout_capture()
     .stderr_capture()

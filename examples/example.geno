@@ -2,7 +2,7 @@ meta {
     format = 1,
 }
 
-// Everything that Morph can do
+// Everything that Geno can do
 
 // Comment
 enum enum1: i16 {

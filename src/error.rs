@@ -44,7 +44,7 @@ impl Display for Location {
 
 /// This crates error enum
 #[derive(Error, Debug)]
-pub enum MorphError {
+pub enum GenoError {
     /// I/O error
     #[error("i/o error")]
     Io(#[from] std::io::Error),
@@ -92,7 +92,7 @@ pub enum MorphError {
     DuplicateVariant(String, String),
 }
 
-impl MorphError {
+impl GenoError {
     /// Create a new parse error
     pub fn new_parse_error(pair: &Pair<'_, Rule>, file_path: &Path) -> Self {
         Self::Parse {
