@@ -31,7 +31,7 @@ integer_type = { "i8" | "u8" | "i16" | "u16" | "i32" | "u32" | "i64" | "u64" }
 float_type   = { "f32" | "f64" }
 
 // Literals
-integer_literal = @{ ("0b" ~ ASCII_BIN_DIGIT+) | ("0x" ~ ASCII_HEX_DIGIT+) | ASCII_DIGIT+ }
+integer_literal = @{ ("0b" ~ ASCII_BIN_DIGIT+) | ("0x" ~ ASCII_HEX_DIGIT+) | ("-"? ~ ASCII_DIGIT+) }
 string_literal  = @{ "\"" ~ ("\\\"" | !("\"") ~ ANY)* ~ "\"" }
 
 // Identifier

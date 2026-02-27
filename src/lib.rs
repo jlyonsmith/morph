@@ -299,6 +299,7 @@ mod tests {
         let input = r#"
 meta { version = 1 }
 enum enum1: i16 {
+    default = -1,
     apple = 1,
     orange = 2,
     kiwiFruit = 3,

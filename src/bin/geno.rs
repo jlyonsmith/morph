@@ -10,7 +10,12 @@ use std::{
 };
 
 #[derive(Parser)]
-#[command(name = "geno", about = "Geno schema compiler")]
+#[command(
+    name = "geno",
+    version,
+    about = "Geno schema compiler",
+    long_about = "Geno is a schema compiler for generating source code from a schema definition."
+)]
 struct Cli {
     /// Input .geno file
     #[arg(value_name = "INPUT_FILE")]

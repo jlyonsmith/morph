@@ -64,13 +64,20 @@ fn generate_enum(
 
     writeln!(
         out,
-        "#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]"
+        "#[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Default)]"
     )
     .unwrap();
     writeln!(out, "#[repr({})]", integer_type_str(base_type)).unwrap();
     writeln!(out, "pub enum {rust_name} {{").unwrap();
 
+    let mut first = true;
+
     for (variant_name, value) in variants {
+        if first {
+            writeln!(out, "    #[default]").unwrap();
+            first = false;
+        }
+
         let rust_variant = to_pascal_case(variant_name);
         if rust_variant != *variant_name {
             writeln!(out, "    #[serde(rename = \"{variant_name}\")]").unwrap();
