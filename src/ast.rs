@@ -98,7 +98,7 @@ pub enum Declaration {
         /// Enum base integer type
         base_type: IntegerType,
         /// Enum variants
-        variants: Vec<(String, Option<IntegerValue>)>,
+        variants: Vec<(String, IntegerValue)>,
     },
     /// Struct declaration
     Struct {
@@ -121,6 +121,14 @@ pub struct Schema {
 impl Schema {
     /// Validate the schema, checking for duplicate type definitions and duplicate fields/variants within each declaration
     pub fn validate(&self) -> Result<(), GenoError> {
+        let expected_format: i64 = 1;
+
+        if self.metadata.get("format")
+            != Some(&MetadataValue::Integer(IntegerValue::I64(expected_format)))
+        {
+            return Err(GenoError::InvalidMetadataFormat());
+        }
+
         let mut type_names = HashSet::new();
 
         // Check for duplicate type definitions and duplicate fields/variants within each declaration
@@ -134,6 +142,11 @@ impl Schema {
                     }
                     let mut variant_names = HashSet::new();
 
+                    // Don't allow enum with no variants
+                    if variants.is_empty() {
+                        return Err(GenoError::EmptyEnum(ident.clone()));
+                    }
+
                     for (variant_name, _) in variants {
                         if !variant_names.insert(variant_name.as_str()) {
                             return Err(GenoError::DuplicateVariant(
@@ -142,6 +155,8 @@ impl Schema {
                             ));
                         }
                     }
+
+                    // TODO: Check all variants have unique values
                 }
                 Declaration::Struct { ident, fields } => {
                     if !type_names.insert(ident.as_str()) {

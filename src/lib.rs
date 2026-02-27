@@ -165,16 +165,13 @@ impl GenoAstBuilder {
         };
 
         // next_pair is now an 'enum_variant_list'
-        let mut variants: Vec<(String, Option<ast::IntegerValue>)> = Vec::new();
+        let mut variants: Vec<(String, ast::IntegerValue)> = Vec::new();
 
         for enum_variant_pair in next_pair.into_inner() {
             let mut variant_inner = enum_variant_pair.into_inner();
             let variant_ident = variant_inner.next().unwrap().as_str().to_string();
-            let variant_value = if let Some(value_pair) = variant_inner.next() {
-                Some(self.build_integer_literal(value_pair)?)
-            } else {
-                None
-            };
+            let variant_value = self.build_integer_literal(variant_inner.next().unwrap())?;
+
             variants.push((variant_ident, variant_value));
         }
 
@@ -297,13 +294,14 @@ mod tests {
     #[test]
     fn happy_path() {
         let input = r#"
-meta { version = 1 }
+meta { format = 1 }
 enum enum1: i16 {
     default = -1,
+    banana = 0,
     apple = 1,
     orange = 2,
     kiwiFruit = 3,
-    pear, // = 3 is inferred
+    pear = 4,
 }
 // Another comment
 struct type1 {

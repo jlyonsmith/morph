@@ -90,6 +90,12 @@ pub enum GenoError {
     /// Duplicate enum variant error
     #[error("duplicate variant '{1}' in enum '{0}'")]
     DuplicateVariant(String, String),
+    /// Enumeration has no variants
+    #[error("enum '{0}' has no variants")]
+    EmptyEnum(String),
+    /// Metadata format is not valid
+    #[error("metadata format is invalid")]
+    InvalidMetadataFormat(),
 }
 
 impl GenoError {

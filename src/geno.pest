@@ -10,7 +10,7 @@ meta_data_entry = { identifier ~ "=" ~ (string_literal | integer_literal) }
 // Enum declaration
 enum_decl         = { "enum" ~ identifier ~ (":" ~ integer_type)? ~ "{" ~ enum_variant_list ~ "}" }
 enum_variant_list = { (enum_variant ~ ("," ~ enum_variant)* ~ ","?)? }
-enum_variant      = { identifier ~ ("=" ~ integer_literal)? }
+enum_variant      = { identifier ~ "=" ~ integer_literal }
 
 // Struct declaration
 struct_decl       = { "struct" ~ identifier ~ "{" ~ struct_field_list ~ "}" ~ ";"? }

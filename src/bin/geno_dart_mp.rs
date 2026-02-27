@@ -101,28 +101,17 @@ fn generate_enum(
     out: &mut String,
     ident: &str,
     _base_type: &ast::IntegerType,
-    variants: &[(String, Option<ast::IntegerValue>)],
+    variants: &[(String, ast::IntegerValue)],
 ) {
     let dart_name = to_pascal_case(ident);
 
     writeln!(out, "enum {dart_name} {{").unwrap();
 
-    let mut next_value: i64 = 0;
     for (i, (variant_name, value)) in variants.iter().enumerate() {
         let dart_variant = to_lower_camel_case(variant_name);
         let trailing = if i < variants.len() - 1 { "," } else { ";" };
-        let actual_value = match value {
-            Some(v) => {
-                let val = integer_value_to_i64(v);
-                next_value = val + 1;
-                val
-            }
-            None => {
-                let val = next_value;
-                next_value += 1;
-                val
-            }
-        };
+        let actual_value = integer_value_str(value);
+
         writeln!(out, "  {dart_variant}({actual_value}){trailing}").unwrap();
     }
 
@@ -476,16 +465,16 @@ fn builtin_unpack_method(bt: &ast::BuiltinType) -> &'static str {
     }
 }
 
-fn integer_value_to_i64(v: &ast::IntegerValue) -> i64 {
+fn integer_value_str(v: &ast::IntegerValue) -> String {
     match v {
-        ast::IntegerValue::I8(n) => *n as i64,
-        ast::IntegerValue::I16(n) => *n as i64,
-        ast::IntegerValue::I32(n) => *n as i64,
-        ast::IntegerValue::I64(n) => *n,
-        ast::IntegerValue::U8(n) => *n as i64,
-        ast::IntegerValue::U16(n) => *n as i64,
-        ast::IntegerValue::U32(n) => *n as i64,
-        ast::IntegerValue::U64(n) => *n as i64,
+        ast::IntegerValue::I8(n) => n.to_string(),
+        ast::IntegerValue::I16(n) => n.to_string(),
+        ast::IntegerValue::I32(n) => n.to_string(),
+        ast::IntegerValue::I64(n) => n.to_string(),
+        ast::IntegerValue::U8(n) => n.to_string(),
+        ast::IntegerValue::U16(n) => n.to_string(),
+        ast::IntegerValue::U32(n) => n.to_string(),
+        ast::IntegerValue::U64(n) => n.to_string(),
     }
 }
 

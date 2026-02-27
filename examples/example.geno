@@ -4,14 +4,16 @@ meta {
 
 // Everything that Geno can do
 
-// Comment
+// Fruits
 enum enum1: i16 {
-	apple = 1,
+  none = -1,
+  apple = 1,
 	orange = 2,
 	kiwiFruit = 3,
-	pear, // = 3 is inferred
+	pear = 4,
 }
-// Another comment
+
+// Everything
 struct type1 {
 	alpha: i8,
 	alpha_beta: u8,

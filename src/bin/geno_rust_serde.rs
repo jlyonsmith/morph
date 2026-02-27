@@ -58,7 +58,7 @@ fn generate_enum(
     out: &mut String,
     ident: &str,
     base_type: &ast::IntegerType,
-    variants: &[(String, Option<ast::IntegerValue>)],
+    variants: &[(String, ast::IntegerValue)],
 ) {
     let rust_name = to_pascal_case(ident);
 
@@ -82,10 +82,7 @@ fn generate_enum(
         if rust_variant != *variant_name {
             writeln!(out, "    #[serde(rename = \"{variant_name}\")]").unwrap();
         }
-        match value {
-            Some(val) => writeln!(out, "    {rust_variant} = {},", integer_value_str(val)).unwrap(),
-            None => writeln!(out, "    {rust_variant},").unwrap(),
-        }
+        writeln!(out, "    {rust_variant} = {},", integer_value_str(value)).unwrap()
     }
 
     writeln!(out, "}}").unwrap();
