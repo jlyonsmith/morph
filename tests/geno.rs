@@ -50,7 +50,7 @@ fn generate_rust_serde() {
         "-f",
         "rust-serde"
     ]
-    .env("MORPH_DEBUG", "1")
+    .env("GENO_DEBUG", "1")
     .stdout_capture()
     .stderr_capture()
     .unchecked()
@@ -81,7 +81,7 @@ fn generate_dart_mp() {
         "-f",
         "dart-mp"
     ]
-    .env("MORPH_DEBUG", "1")
+    .env("GENO_DEBUG", "1")
     .stdout_capture()
     .stderr_capture()
     .unchecked()
@@ -119,7 +119,7 @@ fn generate_to_output_file() {
         "-o",
         out_str
     ]
-    .env("MORPH_DEBUG", "1")
+    .env("GENO_DEBUG", "1")
     .stdout_capture()
     .stderr_capture()
     .unchecked()
@@ -147,7 +147,7 @@ fn missing_input_file() {
         "-f",
         "rust-serde"
     ]
-    .env("MORPH_DEBUG", "1")
+    .env("GENO_DEBUG", "1")
     .stdout_capture()
     .stderr_capture()
     .unchecked()

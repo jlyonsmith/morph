@@ -56,6 +56,7 @@ struct order {
     items: [order; 10],   // fixed-length array
 }
 ```
+The recommended extension for Geno is `.geno`.
 
 ### Metadata
 

@@ -9,12 +9,14 @@ test:
 
 cov-json:
   #!/usr/bin/env fish
+  cargo clean
   cargo llvm-cov test --json --summary-only --output-path scratch/coverage-summary.json
   set cov_percent (cat scratch/coverage-summary.json | jq '.data[0].totals.lines.percent' | math --scale 2)
   set cov_color (if test $cov_percent -gt 80.0; echo green; else if test $cov_percent -lt 50.0; echo red; else echo yellow; end)
   echo '{"schemaVersion":1,"label":"coverage","message":"'$cov_percent'%","color":"'$cov_color'"}' > coverage.json
 
 cov-html:
+  # You might need to run `cargo clean` first to get coverage for the binaries
   cargo llvm-cov test --html --open
 
 doc:
